@@ -94,6 +94,8 @@ class AuthController {
         } else {
             echo "Invalid email or password!";
         }
+
+        return header("Location: index.php?controller=deal&action=index");
     }
 
     public function logout(){

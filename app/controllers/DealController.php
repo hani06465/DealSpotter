@@ -98,7 +98,7 @@ class DealController {
             $new_name
         );
         $_SESSION['success'] = "Deal added successfully!"; // gives us success message
-        header("Location: index.php");
+        header("Location: index.php?controller=deal&action=index");
     }
 
 // Edit-form displayed with infos found in the database
@@ -146,7 +146,7 @@ class DealController {
             $_POST['location']
         );
         $_SESSION['success'] = "Deal updated successfully!";
-        header("Location: index.php");
+        header("Location: index.php?controller=deal&action=index");
     }
 
 // Delete deal that created before:
@@ -165,7 +165,7 @@ class DealController {
 
         $dealModel->delete($_GET['id']);
         $_SESSION['success'] = "Deal deleted successfully!";
-        header("Location: index.php");
+        header("Location: index.php?controller=deal&action=index");
     }
 
     public function changeStatus(){
@@ -194,7 +194,7 @@ class DealController {
 
         $dealModel->updateStatus($_GET['id'], $status);
     $_SESSION['success'] = "Deal status updated!";
-    header("Location: index.php");
+    header("Location: index.php?controller=deal&action=index");
 
     }
 
