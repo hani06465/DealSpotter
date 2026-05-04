@@ -1,3 +1,4 @@
+<?php require "../app/views/layouts/header.php"; ?>
 <h2>Add Deal</h2>
 
 <form method="POST" action="index.php?controller=deal&action=store" enctype="multipart/form-data">

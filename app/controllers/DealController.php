@@ -35,9 +35,7 @@ class DealController {
 // for storing the created deal in the deal database:
      public function store() {
 
-        if (!isset($_SESSION['user_id'])) {
-            die("Unauthorized");
-        }
+        requireLogin();
 
         if ($_POST['csrf'] !== $_SESSION['csrf']) {
             die("Invalid request");
@@ -99,7 +97,7 @@ class DealController {
             $location,
             $new_name
         );
-
+        $_SESSION['success'] = "Deal added successfully!"; // gives us success message
         header("Location: index.php");
     }
 
@@ -147,7 +145,7 @@ class DealController {
             $_POST['phone'],
             $_POST['location']
         );
-
+        $_SESSION['success'] = "Deal updated successfully!";
         header("Location: index.php");
     }
 
@@ -166,7 +164,7 @@ class DealController {
         }
 
         $dealModel->delete($_GET['id']);
-
+        $_SESSION['success'] = "Deal deleted successfully!";
         header("Location: index.php");
     }
 
@@ -195,7 +193,7 @@ class DealController {
         }
 
         $dealModel->updateStatus($_GET['id'], $status);
-
+    $_SESSION['success'] = "Deal status updated!";
     header("Location: index.php");
 
     }

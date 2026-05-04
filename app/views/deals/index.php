@@ -1,4 +1,14 @@
+<?php require "../app/views/layouts/header.php"; ?>
 <h2>All-Deals</h2>
+
+<?php if(isset($_SESSION['success'])): ?>
+    <div style="background:lightgreen; padding:10px; margin-bottom:10px;">
+        <?php 
+            echo $_SESSION['success']; 
+            unset($_SESSION['success']);
+        ?>
+    </div>
+<?php endif; ?>
 
 <!-- Search -->
 <form method="GET" action="index.php">
@@ -16,7 +26,7 @@
 
 <?php while($deal = $deals->fetch_assoc()): ?>
 
-<div style="border:1px solid #ccc; margin:10px; padding:10px;">
+<div class="card">
 
 <img src="../uploads/<?php echo htmlspecialchars($deal['image']); ?>" width="200"><br>
 
@@ -25,15 +35,24 @@ Price: <?php echo htmlspecialchars($deal['price']); ?><br>
 Store: <?php echo htmlspecialchars($deal['store_name']); ?><br>
 Phone: <?php echo htmlspecialchars($deal['store_phone']); ?><br>
 Location: <?php echo htmlspecialchars($deal['location']); ?><br>
-<b style="color: <?php echo ($deal['status'] == 'Unavailable') ? 'red' : 'green'; ?>">
-        <?php echo htmlspecialchars($deal['status']); ?>
-</b>
-<br><br>
+
+    Status:
+    <?php if($deal['status'] == 'Unavailable'): ?>
+        <span style="color:red; font-weight:bold;">Deal Ended</span>
+    <?php else: ?>
+        <span style="color:green; font-weight:bold;">Available</span>
+    <?php endif; ?>
+
+    <br><br>
 
 <?php if(isset($_SESSION['user_id']) && ($_SESSION['user_id'] == $deal['user_id'] || $_SESSION['role'] == 'admin')): ?>
 
-<a href="index.php?controller=deal&action=edit&id=<?php echo $deal['id']; ?>">Edit</a>
-<a href="index.php?controller=deal&action=delete&id=<?php echo $deal['id']; ?>">Delete</a>
+<a  class="btn btn-delete"  style="background-color:lightblue;" href="index.php?controller=deal&action=edit&id=<?php echo $deal['id']; ?>">Edit</a>
+<a class="btn btn-delete"
+   onclick="return confirm('Are you sure you want to delete this deal?')"
+   href="index.php?controller=deal&action=delete&id=<?php echo $deal['id']; ?>">
+   Delete
+</a>
 <br><br>
 
 <!--Change Status -->
@@ -50,3 +69,4 @@ Location: <?php echo htmlspecialchars($deal['location']); ?><br>
 </div>
 
 <?php endwhile; ?>
+<?php require "../app/views/layouts/footer.php"; ?>

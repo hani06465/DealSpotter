@@ -1,3 +1,4 @@
+<?php require "../app/views/layouts/header.php"; ?>
 <h2>Register</h2>
 
 <form method="POST" action="index.php?controller=auth&action=store">
@@ -11,4 +12,4 @@
     <button type="submit">Register</button>
 </form>
 
-<a href="index.php?controller=auth&action=login">Login</a>
+<?php require "../app/views/layouts/footer.php"; ?>
