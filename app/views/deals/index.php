@@ -47,7 +47,7 @@ Location: <?php echo htmlspecialchars($deal['location']); ?><br>
 
 <?php if(isset($_SESSION['user_id']) && ($_SESSION['user_id'] == $deal['user_id'] || $_SESSION['role'] == 'admin')): ?>
 
-<a  class="btn btn-delete"  style="background-color:lightblue;" href="index.php?controller=deal&action=edit&id=<?php echo $deal['id']; ?>">Edit</a>
+<a  class="btn-edit"  href="index.php?controller=deal&action=edit&id=<?php echo $deal['id']; ?>">Edit</a>
 <a class="btn btn-delete"
    onclick="return confirm('Are you sure you want to delete this deal?')"
    href="index.php?controller=deal&action=delete&id=<?php echo $deal['id']; ?>">
