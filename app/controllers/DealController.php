@@ -1,18 +1,24 @@
 <?php
 
-
+require_once "../app/helpers/auth.php";
 require_once "../app/models/Deal.php";
 
 
 class DealController {
 
 // for showing all the deals
-    public function index() {
-        $dealModel = new Deal();
-        $deals = $dealModel->getAll();
+  public function index() {
+    $dealModel = new Deal();
 
-        require "../app/views/deals/index.php";
+    if (isset($_GET['search']) && !empty(trim($_GET['search']))) {
+        $keyword = trim($_GET['search']);
+        $deals = $dealModel->search($keyword);
+    } else {
+        $deals = $dealModel->getAll();
     }
+
+    require "../app/views/deals/index.php";
+}
 
 
 // for showing the form for creating a deal
@@ -99,9 +105,14 @@ class DealController {
 
 // Edit-form displayed with infos found in the database
     public function edit() {
+
+        requireLogin();
         $dealModel = new Deal();
         $deal = $dealModel->getById($_GET['id']);
 
+        if (!$deal) {
+        die("Deal not found");
+        }
         // for checking the owner ship of teh deal:
 
         if ($_SESSION['user_id'] != $deal['user_id'] && $_SESSION['role'] != 'admin') {
@@ -113,9 +124,15 @@ class DealController {
 
 // Update deal-created
     public function update() {
-        $dealModel = new Deal();
 
+        requireLogin();
+
+        $dealModel = new Deal();
         $deal = $dealModel->getById($_POST['id']);
+
+        if (!$deal) {
+        die("Deal not found");
+        }
 
         // checks if the updater is the one that create the deal and not an admin:
         if ($_SESSION['user_id'] != $deal['user_id'] && $_SESSION['role'] != 'admin') {
@@ -136,9 +153,13 @@ class DealController {
 
 // Delete deal that created before:
     public function delete() {
+        requireLogin();
         $dealModel = new Deal();
 
         $deal = $dealModel->getById($_GET['id']);
+        if (!$deal) {
+        die("Deal not found");
+    }
 
         if ($_SESSION['user_id'] != $deal['user_id'] && $_SESSION['role'] != 'admin') {
             die("Access denied");
@@ -147,6 +168,36 @@ class DealController {
         $dealModel->delete($_GET['id']);
 
         header("Location: index.php");
+    }
+
+    public function changeStatus(){
+        requireLogin();
+
+        if (!isset($_GET['id']) || empty($_GET['id'])) {
+        die("Invalid request (missing ID)");
+        }
+
+        $dealModel = new Deal();
+        $deal = $dealModel->getById($_GET['id']);
+
+        if (!$deal) {
+        die("Deal not found");
+        }
+
+        if (!isOwner($deal) && !isAdmin()) {
+        die("Access denied");
+        }
+
+        $status = $_GET['status'];
+
+        if (!in_array($status, ['available','Unavailable'])) {
+        die("Invalid status");
+        }
+
+        $dealModel->updateStatus($_GET['id'], $status);
+
+    header("Location: index.php");
+
     }
 
 }

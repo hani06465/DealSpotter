@@ -9,10 +9,19 @@ class Deal {
         global $conn;
 
 
-        $stmt = $conn->prepare("INSERT INTO deals (user_id, item_name, price, store_name, store_phone, location, image) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $conn->prepare("INSERT INTO deals (user_id, item_name, price, store_name, store_phone, location, image,status) VALUES (?, ?, ?, ?, ?, ?, ?, 'available')");
         $stmt->bind_param("issssss", $user_id, $item_name, $price, $store_name, $phone, $location, $image);
 
         return $stmt->execute();
+    }
+
+    public function updateStatus($id, $status) {
+    global $conn;
+
+    $stmt = $conn->prepare("UPDATE deals SET status=? WHERE id=?");
+    $stmt->bind_param("si", $status, $id);
+
+    return $stmt->execute();
     }
 
 
@@ -50,5 +59,18 @@ class Deal {
 
         return $stmt->execute();
     }
+
+    public function search($keyword) {
+    global $conn;
+
+    $keyword = "%" . $keyword . "%";
+
+    $stmt = $conn->prepare("SELECT * FROM deals WHERE item_name LIKE ?");
+    $stmt->bind_param("s", $keyword);
+    $stmt->execute();
+
+    return $stmt->get_result();
+    }
+
 
 }
