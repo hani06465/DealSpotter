@@ -49,4 +49,28 @@ class User{
 
     return $stmt->get_result()->fetch_assoc();
     }
+
+    // to get all the users for the admin profile:
+    public function getAllUsers() {
+    global $conn;
+
+    return $conn->query("
+        SELECT id, name, email 
+        FROM users 
+        WHERE role = 'user'
+        ORDER BY id DESC
+    ");
+}
+
+    // delete users account if needed by the admin:
+    public function deleteUser($id) {
+    global $conn;
+
+    $stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
+    $stmt->bind_param("i", $id);
+
+    return $stmt->execute();
+    }
+
+    
 }

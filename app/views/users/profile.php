@@ -10,23 +10,26 @@
     <a class="btn btn-edit" href="index.php?controller=user&action=edit">Edit Profile</a>
 </div>
 
-<h3>My Deals</h3>
+<hr>
 
-<?php if($deals->num_rows == 0): ?>
-    <p>You have not posted any deals yet.</p>
-<?php endif; ?>
+<!-- 👤 USER VIEW -->
+<?php if($_SESSION['role'] != 'admin'): ?>
 
-<?php while($deal = $deals->fetch_assoc()): ?>
+    <h3>My Deals</h3>
 
-<div class="card">
+    <?php if($deals->num_rows == 0): ?>
+        <p>You have not posted any deals yet.</p>
+    <?php endif; ?>
 
-    <img src="../uploads/<?php echo htmlspecialchars($deal['image']); ?>" width="150"><br><br>
+    <?php while($deal = $deals->fetch_assoc()): ?>
+        <div class="card">
 
-    <b><?php echo htmlspecialchars($deal['item_name']); ?></b><br>
-    Price: <?php echo htmlspecialchars($deal['price']); ?><br>
-     <br>
+            <img src="../uploads/<?php echo htmlspecialchars($deal['image']); ?>" width="150"><br><br>
 
-<?php if(isset($_SESSION['user_id']) && ($_SESSION['user_id'] == $deal['user_id'] || $_SESSION['role'] == 'admin')): ?>
+            <b><?php echo htmlspecialchars($deal['item_name']); ?></b><br>
+            Price: <?php echo htmlspecialchars($deal['price']); ?><br><br>
+
+            <?php if(isset($_SESSION['user_id']) && $_SESSION['user_id'] == $deal['user_id'] || $_SESSION['role'] == 'admin'): ?>
      
 <a  class="btn-edit"  href="index.php?controller=deal&action=edit&id=<?php echo $deal['id']; ?>">Edit</a>
 <a class="btn btn-delete"
@@ -34,11 +37,43 @@
    href="index.php?controller=deal&action=delete&id=<?php echo $deal['id']; ?>">
    Delete
 </a>
-<br>
-<?php endif ?>
+<br><br>
+<?php endif; ?>
 
-</div>
+        </div>
+    <?php endwhile; ?>
 
-<?php endwhile; ?>
+<?php endif; ?>
+
+---
+
+<!-- 👑 ADMIN VIEW -->
+<?php if($_SESSION['role'] == 'admin'): ?>
+
+    <h3>All Users</h3>
+
+    <?php if($users->num_rows == 0): ?>
+        <p>No users found.</p>
+    <?php endif; ?>
+
+    <?php while($u = $users->fetch_assoc()): ?>
+        
+        <div class="card">
+
+            <b><?php echo htmlspecialchars($u['name']); ?></b><br>
+            Email: <?php echo htmlspecialchars($u['email']); ?><br><br>
+
+            <a class="btn btn-delete"
+               onclick="return confirm('Delete this user?')"
+               href="index.php?controller=user&action=deleteUser&id=<?php echo $u['id']; ?>">
+               Delete
+            </a>
+        
+
+        </div>
+
+    <?php endwhile; ?>
+
+<?php endif; ?>
 
 <?php require "../app/views/layouts/footer.php"; ?>

@@ -6,26 +6,21 @@ require_once "../app/helpers/auth.php";
 class UserController {
 
     public function profile() {
-        requireLogin();
+    requireLogin();
 
-        $userModel = new User();
-        $dealModel = new Deal();
+    $userModel = new User();
+    $dealModel = new Deal();
 
-        $user = $userModel->getById($_SESSION['user_id']);
+    $user = $userModel->getById($_SESSION['user_id']);
+
+    if ($_SESSION['role'] == 'admin') {
+        $users = $userModel->getAllUsers();
+    } else {
         $deals = $dealModel->getByUser($_SESSION['user_id']);
-
-        require "../app/views/users/profile.php";
     }
 
-    public function edit() {
-        requireLogin();
-
-        $userModel = new User();
-        $user = $userModel->getById($_SESSION['user_id']);
-
-        require "../app/views/users/edit.php";
-    }
-
+    require "../app/views/users/profile.php";
+}
     public function update() {
     requireLogin();
     global $conn;
@@ -85,4 +80,36 @@ class UserController {
 
     header("Location: index.php?controller=user&action=profile");
 }
+
+    public function deleteUser() {
+    requireLogin();
+
+    if ($_SESSION['role'] != 'admin') {
+        die("Access denied");
+    }
+
+    $id = $_GET['id'];
+
+    // prevent admin deleting himself
+    if ($id == $_SESSION['user_id']) {
+        die("You cannot delete yourself");
+    }
+
+    $userModel = new User();
+    $userModel->deleteUser($id);
+
+    $_SESSION['success'] = "User deleted successfully!";
+
+    header("Location: index.php?controller=user&action=profile");
+}
+
+public function edit() {
+
+        requireLogin();
+        $users = new User();
+        $user = $users->getById($_SESSION['user_id']);
+
+        
+        require "../app/views/users/edit.php";
+    }
 }
