@@ -19,9 +19,7 @@
 </form>
 <br>
 
-<?php if(isset($_SESSION['user_id'])): ?>
-    <a href="index.php?controller=deal&action=create">Add Deal</a>
-<?php endif; ?>
+
 <hr>
 
 <?php while($deal = $deals->fetch_assoc()): ?>
@@ -45,8 +43,8 @@ Location: <?php echo htmlspecialchars($deal['location']); ?><br>
 
     <br><br>
 
-<?php if(isset($_SESSION['user_id']) && ($_SESSION['user_id'] == $deal['user_id'] || $_SESSION['role'] == 'admin')): ?>
-
+<?php if(isset($_SESSION['user_id']) &&  $_SESSION['role'] == 'admin'): ?>
+     
 <a  class="btn-edit"  href="index.php?controller=deal&action=edit&id=<?php echo $deal['id']; ?>">Edit</a>
 <a class="btn btn-delete"
    onclick="return confirm('Are you sure you want to delete this deal?')"
@@ -54,8 +52,11 @@ Location: <?php echo htmlspecialchars($deal['location']); ?><br>
    Delete
 </a>
 <br><br>
+<?php endif; ?>
 
-<!--Change Status -->
+<?php if(isset($_SESSION['user_id']) && ($_SESSION['user_id'] == $deal['user_id'] || $_SESSION['role'] == 'admin')): ?>
+     
+<!-- for changing Status -->
         <a href="index.php?controller=deal&action=changeStatus&id=<?php echo $deal['id']; ?>&status=available">
             Mark Available
         </a>|
@@ -63,8 +64,8 @@ Location: <?php echo htmlspecialchars($deal['location']); ?><br>
         <a href="index.php?controller=deal&action=changeStatus&id=<?php echo $deal['id']; ?>&status=Unavailable">
             Mark Unavailable
         </a>
-
 <?php endif; ?>
+
 
 </div>
 

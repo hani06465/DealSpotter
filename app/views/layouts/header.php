@@ -68,8 +68,16 @@ img {
 <div class="navbar">
 
    <a href="index.php?controller=deal&action=index">Home</a>
+   <?php if(isset($_SESSION['role']) && $_SESSION['role'] == 'admin'): ?>
+    <a href="index.php?controller=suggestion&action=index">Suggestions</a>
+    <?php endif; ?>
+    <?php if(isset($_SESSION['user_id'])): ?>
+    <a href="index.php?controller=user&action=profile">My Profile</a>
+<?php endif; ?>
+
 
     <?php if(isset($_SESSION['user_id'])): ?>
+        <a href="index.php?controller=suggestion&action=create">Contact us</a>
         <a href="index.php?controller=deal&action=create">Add Deal</a>
         <a href="index.php?controller=auth&action=logout">Logout</a>
     <?php else: ?>

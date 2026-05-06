@@ -72,5 +72,18 @@ class Deal {
     return $stmt->get_result();
     }
 
+    // information for user profile from deals table:
+    public function getByUser($user_id) {
+    global $conn;
+
+    $stmt = $conn->prepare("SELECT * FROM deals WHERE user_id = ? ORDER BY created_at DESC");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+
+    return $stmt->get_result();
+    }   
+
+
+
 
 }

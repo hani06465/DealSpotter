@@ -39,4 +39,14 @@ class User{
         $result = $stmt->get_result();
         return $result->fetch_assoc();
     }
+
+    public function getById($id) {
+    global $conn;
+
+    $stmt = $conn->prepare("SELECT id, name, email, created_at FROM users WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+
+    return $stmt->get_result()->fetch_assoc();
+    }
 }
