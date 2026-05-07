@@ -33,12 +33,12 @@ class UserController {
         return;
     }
 
-    // 🔹 Update basic info
+    // for updating basic infos
     $stmt = $conn->prepare("UPDATE users SET name=?, email=? WHERE id=?");
     $stmt->bind_param("ssi", $name, $email, $_SESSION['user_id']);
     $stmt->execute();
 
-    // 🔒 PASSWORD PART (ONLY IF FILLED)
+    // they are optional based on the user's want:
     $current = $_POST['current_password'] ?? '';
     $new     = $_POST['new_password'] ?? '';
     $confirm = $_POST['confirm_password'] ?? '';

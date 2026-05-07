@@ -9,8 +9,17 @@
         ?>
     </div>
 <?php endif; ?>
+<?php if(isset($_SESSION['INVALID'])): ?>
+    <div style="background:red; padding:10px; margin-bottom:10px;">
+        <?php 
+            echo $_SESSION['INVALID']; 
+            unset($_SESSION['INVALID']);
+        ?>
+    </div>
+<?php endif; ?>
 
-<!-- Search -->
+
+<!--  for Searching deals -->
 <form method="GET" action="index.php">
     <input type="hidden" name="controller" value="deal">
      <input type="hidden" name="action" value="index"> 
@@ -21,6 +30,10 @@
 
 
 <hr>
+<?php
+require_once "../app/models/Comment.php";
+$commentModel = new Comment();
+?>
 
 <?php while($deal = $deals->fetch_assoc()): ?>
 
@@ -65,6 +78,64 @@ Location: <?php echo htmlspecialchars($deal['location']); ?><br>
             Mark Unavailable
         </a>
 <?php endif; ?>
+<br><br>
+
+<!-- for comment section in each deal: -->
+<?php if(isset($_SESSION['user_id'])): ?>
+
+<form method="POST"
+action="index.php?controller=comment&action=store">
+
+    <input type="hidden"
+    name="deal_id"
+    value="<?php echo $deal['id']; ?>">
+
+    <textarea name="comment"
+    placeholder="Write comment..."
+    required></textarea>
+
+    <br><br>
+
+    <button>Comment</button>
+
+</form>
+
+<?php endif; ?>
+
+<!-- for displaying comments -->
+<?php
+$comments = $commentModel->getByDeal($deal['id']);
+?>
+
+<h4>Comments</h4>
+
+<?php while($comment = $comments->fetch_assoc()): ?>
+
+<div style="
+background:#f1f1f1;
+padding:10px;
+margin-top:10px;
+border-radius:5px;
+">
+
+    <b>
+    <?php echo htmlspecialchars($comment['name']); ?>
+    </b>
+
+    <br><br>
+
+    <?php echo nl2br(htmlspecialchars($comment['comment'])); ?>
+
+    <br><br>
+
+    <small>
+        <?php echo $comment['created_at']; ?>
+    </small>
+
+</div>
+
+<?php endwhile; ?>
+
 
 
 </div>

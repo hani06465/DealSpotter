@@ -90,12 +90,15 @@ class AuthController {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['role'] = $user['role'];
 
-            header("Location: index.php");
+            return header("Location: index.php?controller=deal&action=index");
         } else {
-            echo "Invalid email or password!";
+            //echo "Invalid email or password!";
+            $_SESSION['INVALID'] = "Invalid email or password to login try with correct one again:";
+            return header("Location: index.php?controller=deal&action=index");
+
         }
 
-        return header("Location: index.php?controller=deal&action=index");
+        // return header("Location: index.php?controller=deal&action=index");
     }
 
     public function logout(){

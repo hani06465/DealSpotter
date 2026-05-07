@@ -1,6 +1,6 @@
 <?php require "../app/views/layouts/header.php"; ?>
 
-<h2>Contact Us / Suggestion</h2>
+<h2>Write your report or your Suggestion</h2>
 
 <form method="POST" action="index.php?controller=suggestion&action=store">
 

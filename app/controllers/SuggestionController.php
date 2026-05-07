@@ -26,7 +26,7 @@ class SuggestionController {
         header("Location: index.php?controller=deal&action=index");
     }
 
-    // ADMIN VIEW
+    // give us all the suggestion from the suggestion table:
     public function index() {
         requireLogin();
 

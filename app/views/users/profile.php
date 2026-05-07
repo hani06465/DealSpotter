@@ -1,6 +1,6 @@
 <?php require "../app/views/layouts/header.php"; ?>
 
-<h2>My Profile</h2>
+<h2><?php echo htmlspecialchars($user['name']); ?>'s Profile</h2>
 
 <div class="card">
     <b>Name:</b> <?php echo htmlspecialchars($user['name']); ?><br>
@@ -12,7 +12,7 @@
 
 <hr>
 
-<!-- 👤 USER VIEW -->
+<!-- if user is not admin -->
 <?php if($_SESSION['role'] != 'admin'): ?>
 
     <h3>My Deals</h3>
@@ -45,9 +45,8 @@
 
 <?php endif; ?>
 
----
 
-<!-- 👑 ADMIN VIEW -->
+<!-- if the user is admin -->
 <?php if($_SESSION['role'] == 'admin'): ?>
 
     <h3>All Users</h3>
