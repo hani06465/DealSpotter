@@ -28,12 +28,7 @@
 </form>
 <br>
 
-
 <hr>
-<?php
-require_once "../app/models/Comment.php";
-$commentModel = new Comment();
-?>
 
 <?php while($deal = $deals->fetch_assoc()): ?>
 
@@ -80,63 +75,11 @@ Location: <?php echo htmlspecialchars($deal['location']); ?><br>
 <?php endif; ?>
 <br><br>
 
-<!-- for comment section in each deal: -->
-<?php if(isset($_SESSION['user_id'])): ?>
-
-<form method="POST"
-action="index.php?controller=comment&action=store">
-
-    <input type="hidden"
-    name="deal_id"
-    value="<?php echo $deal['id']; ?>">
-
-    <textarea name="comment"
-    placeholder="Write comment..."
-    required></textarea>
-
-    <br><br>
-
-    <button>Comment</button>
-
-</form>
-
-<?php endif; ?>
-
-<!-- for displaying comments -->
-<?php
-$comments = $commentModel->getByDeal($deal['id']);
-?>
-
-<h4>Comments</h4>
-
-<?php while($comment = $comments->fetch_assoc()): ?>
-
-<div style="
-background:#f1f1f1;
-padding:10px;
-margin-top:10px;
-border-radius:5px;
-">
-
-    <b>
-    <?php echo htmlspecialchars($comment['name']); ?>
-    </b>
-
-    <br><br>
-
-    <?php echo nl2br(htmlspecialchars($comment['comment'])); ?>
-
-    <br><br>
-
-    <small>
-        <?php echo $comment['created_at']; ?>
-    </small>
-
-</div>
-
-<?php endwhile; ?>
-
-
+<!-- this will add comment button -->
+<a class="btn btn-status"
+href="index.php?controller=comment&action=show&deal_id=<?php echo $deal['id']; ?>">
+Comments
+</a>
 
 </div>
 
