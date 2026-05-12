@@ -1,104 +1,147 @@
 <?php require "../app/views/layouts/header.php"; ?>
 
-<h2>Deal Details</h2>
+<style>
+    .deal-container {
+        max-width: 800px;
+        margin: 30px auto;
+        padding: 0 15px;
+    }
 
-<div class="card">
+    .card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
 
-    <img src="../uploads/<?php echo htmlspecialchars($deal['image']); ?>"
-    width="250">
+    .deal-image {
+        width: 100%;
+        height: 280px;
+        object-fit: cover;
+    }
 
-    <br><br>
+    .deal-info {
+        padding: 25px;
+    }
 
-    <b>
-        <?php echo htmlspecialchars($deal['item_name']); ?>
-    </b>
+    .deal-info h2 {
+        margin: 0 0 20px 0;
+        color: #1f2937;
+    }
 
-    <br><br>
+    .info-row {
+        margin-bottom: 12px;
+        font-size: 16px;
+    }
 
-    Price:
-    <?php echo htmlspecialchars($deal['price']); ?>
+    .info-label {
+        font-weight: bold;
+        color: #374151;
+        display: inline-block;
+        width: 100px;
+    }
 
-    <br><br>
+    .comment-card {
+        background: #f8fafc;
+        padding: 18px;
+        border-radius: 10px;
+        margin-bottom: 18px;
+        border-left: 4px solid #3b82f6;
+    }
 
-    Store:
-    <?php echo htmlspecialchars($deal['store_name']); ?>
+    .comment-card b {
+        color: #1f2937;
+    }
 
-    <br><br>
+    textarea {
+        width: 100%;
+        padding: 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 16px;
+        resize: vertical;
+        min-height: 120px;
+    }
 
-    Location:
-    <?php echo htmlspecialchars($deal['location']); ?>
+    button {
+        background: #3b82f6;
+        color: white;
+        padding: 12px 28px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+    }
 
-    <br><br>
+    button:hover {
+        background: #2563eb;
+    }
+</style>
 
-    Status:
-    <?php echo htmlspecialchars($deal['status']); ?>
+<div class="deal-container">
 
-</div>
+    <h2 style="text-align:center; margin-bottom:25px;">Deal Details</h2>
 
-<hr>
+    <div class="card">
+        <img src="../uploads/<?php echo htmlspecialchars($deal['image']); ?>" 
+             alt="<?php echo htmlspecialchars($deal['item_name']); ?>"
+             class="deal-image">
 
-<h3>Comments</h3>
+        <div class="deal-info">
+            <h2><?php echo htmlspecialchars($deal['item_name']); ?></h2>
 
-<!-- COMMENTS LOOP -->
-<?php while($comment = $comments->fetch_assoc()): ?>
-
-<div style="
-background:#f5f5f5;
-padding:10px;
-margin-bottom:10px;
-border-radius:5px;
-">
-
-    <b>
-        <?php echo htmlspecialchars($comment['name']); ?>
-    </b>
-
-    <br><br>
-
-    <?php echo nl2br(htmlspecialchars($comment['comment'])); ?>
-
-    <br><br>
-
-    <small>
-        <?php echo $comment['created_at']; ?>
-    </small>
-
-    <br><br>
+            <div class="info-row">
+                <span class="info-label">Price:</span>
+                <?php echo htmlspecialchars($deal['price']); ?>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Store:</span>
+                <?php echo htmlspecialchars($deal['store_name']); ?>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Location:</span>
+                <?php echo htmlspecialchars($deal['location']); ?>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Status:</span>
+                <strong style="color: <?php echo $deal['status'] == 'Unavailable' ? 'red' : 'green'; ?>;">
+                    <?php echo htmlspecialchars($deal['status']); ?>
+                </strong>
+            </div>
+        </div>
     </div>
 
-<?php endwhile; ?>
+    <h3>Comments</h3>
 
-<hr>
-<!-- COMMENT FORM -->
-<?php if(isset($_SESSION['user_id'])): ?>
+    <?php if($comments->num_rows == 0): ?>
+        <p>No comments yet. Be the first to comment!</p>
+    <?php endif; ?>
 
-<h3>Write Comment</h3>
+    <?php while($comment = $comments->fetch_assoc()): ?>
+        <div class="comment-card">
+            <b><?php echo htmlspecialchars($comment['name']); ?></b><br><br>
+            <?php echo nl2br(htmlspecialchars($comment['comment'])); ?><br><br>
+            <small><?php echo $comment['created_at']; ?></small>
+        </div>
+    <?php endwhile; ?>
 
-<form method="POST"
-action="index.php?controller=comment&action=store">
+    <hr style="margin: 40px 0;">
 
-    <input type="hidden"
-    name="deal_id"
-    value="<?php echo $deal['id']; ?>">
+    <h3>Write a Comment</h3>
 
-    <textarea
-    name="comment"
-    rows="5"
-    style="width:100%;"
-    placeholder="Write your comment..."
-    required></textarea>
+    <?php if(isset($_SESSION['user_id'])): ?>
+        <form method="POST" action="index.php?controller=comment&action=store">
+            <input type="hidden" name="deal_id" value="<?php echo $deal['id']; ?>">
 
-    <br><br>
+            <textarea name="comment" placeholder="Write your comment here..." required></textarea><br><br>
+            
+            <button type="submit">Post Comment</button>
+        </form>
+    <?php else: ?>
+        <p>Please <a href="index.php?controller=auth&action=login">login</a> to write a comment.</p>
+    <?php endif; ?>
 
-    <button>Comment</button>
-
-</form>
-<?php else: ?>
-
-<p>
-    Login to write comments.
-</p>
-
-<?php endif; ?>
+</div>
 
 <?php require "../app/views/layouts/footer.php"; ?>

@@ -1,87 +1,82 @@
 <?php require "../app/views/layouts/header.php"; ?>
-<h2>All-Deals</h2>
+<!-- <h2>All-Deals</h2> -->
 
-<?php if(isset($_SESSION['success'])): ?>
-    <div style="background:lightgreen; padding:10px; margin-bottom:10px;">
-        <?php 
-            echo $_SESSION['success']; 
-            unset($_SESSION['success']);
-        ?>
-    </div>
-<?php endif; ?>
-<?php if(isset($_SESSION['INVALID'])): ?>
-    <div style="background:red; padding:10px; margin-bottom:10px;">
-        <?php 
-            echo $_SESSION['INVALID']; 
-            unset($_SESSION['INVALID']);
-        ?>
-    </div>
-<?php endif; ?>
+
+
 
 
 <!--  for Searching deals -->
-<form method="GET" action="index.php">
+<form method="GET" action="index.php" 
+      style="max-width: 650px; margin: 30px auto; display: flex; align-items: center; background: white; border: 2px solid #e5e7eb; border-radius: 50px; padding: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+    
     <input type="hidden" name="controller" value="deal">
-     <input type="hidden" name="action" value="index"> 
-    <input type="text" name="search" placeholder="Search item...">
-    <button>Search</button>
-</form>
-<br>
+    <input type="hidden" name="action" value="index"> 
+    
+    <input type="text" name="search" 
+           placeholder="Search item..." 
+           autocomplete="off"
+           style="flex: 1; border: none; outline: none; padding: 14px 20px; font-size: 16px; border-radius: 50px; background: transparent;">
 
-<hr>
+    <button type="submit" 
+            style="background: #3b82f6; color: white; border: none; padding: 12px 34px; border-radius: 50px; font-weight: bold; cursor: pointer; ">
+        Search
+    </button>
+</form><br>
 
+
+
+<!-- <h2>All-Deals</h2> -->
+<div style="margin: 40px 0;"></div>
+<div style="margin: 40px 0;"></div>
 <?php while($deal = $deals->fetch_assoc()): ?>
 
 <div class="card">
 
-<img src="../uploads/<?php echo htmlspecialchars($deal['image']); ?>" width="200"><br>
+    <!-- Full Width Image -->
+    <img src="../uploads/<?php echo htmlspecialchars($deal['image']); ?>" 
+         alt="<?php echo htmlspecialchars($deal['item_name']); ?>"
+         style="width: 100%; height: 220px; object-fit: cover; border-radius: 10px 10px 0 0; display: block;">
 
-<b><?php echo htmlspecialchars($deal['item_name']); ?></b><br>
-Price: <?php echo htmlspecialchars($deal['price']); ?><br>
-Store: <?php echo htmlspecialchars($deal['store_name']); ?><br>
-Phone: <?php echo htmlspecialchars($deal['store_phone']); ?><br>
-Location: <?php echo htmlspecialchars($deal['location']); ?><br>
+    <div style="padding: 15px 15px 20px 15px;">
+        
+        <b><?php echo htmlspecialchars($deal['item_name']); ?></b><br><br>
+        
+        <strong>Price:</strong> <?php echo htmlspecialchars($deal['price']); ?><br>
+        <strong>Store:</strong> <?php echo htmlspecialchars($deal['store_name']); ?><br>
+        <strong>Phone:</strong> <?php echo htmlspecialchars($deal['store_phone']); ?><br>
+        <strong>Location:</strong> <?php echo htmlspecialchars($deal['location']); ?><br><br>
 
-    Status:
-    <?php if($deal['status'] == 'Unavailable'): ?>
-        <span style="color:red; font-weight:bold;">Deal Ended</span>
-    <?php else: ?>
-        <span style="color:green; font-weight:bold;">Available</span>
-    <?php endif; ?>
+        <strong>Status:</strong> 
+        <?php if($deal['status'] == 'Unavailable'): ?>
+            <span style="color:red; font-weight:bold;">Deal Ended</span>
+        <?php else: ?>
+            <span style="color:green; font-weight:bold;">Available</span>
+        <?php endif; ?>
 
-    <br><br>
+        <br><br>
 
-<?php if(isset($_SESSION['user_id']) &&  $_SESSION['role'] == 'admin'): ?>
-     
-<a  class="btn-edit"  href="index.php?controller=deal&action=edit&id=<?php echo $deal['id']; ?>">Edit</a>
-<a class="btn btn-delete"
-   onclick="return confirm('Are you sure you want to delete this deal?')"
-   href="index.php?controller=deal&action=delete&id=<?php echo $deal['id']; ?>">
-   Delete
-</a>
-<br><br>
-<?php endif; ?>
+        <?php if(isset($_SESSION['user_id']) && $_SESSION['role'] == 'admin'): ?>
+            <a class="btn-edit" href="index.php?controller=deal&action=edit&id=<?php echo $deal['id']; ?>">Edit</a>
+            <a class="btn btn-delete"
+               onclick="return confirm('Are you sure you want to delete this deal?')"
+               href="index.php?controller=deal&action=delete&id=<?php echo $deal['id']; ?>">
+               Delete
+            </a>
+            <br><br>
+        <?php endif; ?>
 
-<?php if(isset($_SESSION['user_id']) && ($_SESSION['user_id'] == $deal['user_id'] || $_SESSION['role'] == 'admin')): ?>
-     
-<!-- for changing Status -->
-        <a href="index.php?controller=deal&action=changeStatus&id=<?php echo $deal['id']; ?>&status=available">
-            Mark Available
-        </a>|
+        <?php if(isset($_SESSION['user_id']) && ($_SESSION['user_id'] == $deal['user_id'] || $_SESSION['role'] == 'admin')): ?>
+            <a href="index.php?controller=deal&action=changeStatus&id=<?php echo $deal['id']; ?>&status=available">Mark Available</a> |
+            <a href="index.php?controller=deal&action=changeStatus&id=<?php echo $deal['id']; ?>&status=Unavailable">Mark Unavailable</a>
+            <br><br>
+        <?php endif; ?>
 
-        <a href="index.php?controller=deal&action=changeStatus&id=<?php echo $deal['id']; ?>&status=Unavailable">
-            Mark Unavailable
+        <a class="btn btn-status"
+           href="index.php?controller=comment&action=show&deal_id=<?php echo $deal['id']; ?>">
+           Comments
         </a>
-<?php endif; ?>
-<br><br>
 
-<!-- this will add comment button -->
-<a class="btn btn-status"
-href="index.php?controller=comment&action=show&deal_id=<?php echo $deal['id']; ?>">
-Comments
-</a>
-
+    </div>
 </div>
-
 <?php endwhile; ?>
 <?php require "../app/views/layouts/footer.php"; ?>

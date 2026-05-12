@@ -22,7 +22,7 @@ class SuggestionController {
         $suggestionModel = new Suggestion();
         $suggestionModel->create($_SESSION['user_id'], $message);
 
-        $_SESSION['success'] = "Suggestion sent successfully!";
+        
         header("Location: index.php?controller=deal&action=index");
     }
 

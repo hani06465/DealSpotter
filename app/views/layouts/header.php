@@ -29,6 +29,10 @@ body {
     width: 85%;
     margin: auto;
     margin-top: 20px;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px; /* spacing between cards */
 }
 
 .card {
