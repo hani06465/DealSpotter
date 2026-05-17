@@ -1,59 +1,70 @@
 <?php require "../app/views/layouts/header.php"; ?>
-<!-- <h2>All-Deals</h2> -->
 
-
-<!-- <h2>All-Deals</h2> -->
-<div style="margin: 40px 0;"></div>
-<div style="margin: 40px 0;"></div>
-<?php while($deal = $deals->fetch_assoc()): ?>
-
-<div class="card">
-
-    <!-- Full Width Image -->
-    <img src="../uploads/<?php echo htmlspecialchars($deal['image']); ?>" 
-         alt="<?php echo htmlspecialchars($deal['item_name']); ?>"
-         style="width: 100%; height: 220px; object-fit: cover; border-radius: 10px 10px 0 0; display: block;">
-
-    <div style="padding: 15px 15px 20px 15px;">
-        
-        <b><?php echo htmlspecialchars($deal['item_name']); ?></b><br><br>
-        
-        <strong>Price:</strong> <?php echo htmlspecialchars($deal['price']); ?><br>
-        <strong>Store:</strong> <?php echo htmlspecialchars($deal['store_name']); ?><br>
-        <strong>Phone:</strong> <?php echo htmlspecialchars($deal['store_phone']); ?><br>
-        <strong>Location:</strong> <?php echo htmlspecialchars($deal['location']); ?><br><br>
-
-        <strong>Status:</strong> 
-        <?php if($deal['status'] == 'Unavailable'): ?>
-            <span style="color:red; font-weight:bold;">Deal Ended</span>
-        <?php else: ?>
-            <span style="color:green; font-weight:bold;">Available</span>
-        <?php endif; ?>
-
-        <br><br>
-
-        <?php if(isset($_SESSION['user_id']) && $_SESSION['role'] == 'admin'): ?>
-            <a class="btn-edit" href="index.php?controller=deal&action=edit&id=<?php echo $deal['id']; ?>">Edit</a>
-            <a class="btn btn-delete"
-               onclick="return confirm('Are you sure you want to delete this deal?')"
-               href="index.php?controller=deal&action=delete&id=<?php echo $deal['id']; ?>">
-               Delete
-            </a>
-            <br><br>
-        <?php endif; ?>
-
-        <?php if(isset($_SESSION['user_id']) && ($_SESSION['user_id'] == $deal['user_id'] || $_SESSION['role'] == 'admin')): ?>
-            <a href="index.php?controller=deal&action=changeStatus&id=<?php echo $deal['id']; ?>&status=available">Mark Available</a> |
-            <a href="index.php?controller=deal&action=changeStatus&id=<?php echo $deal['id']; ?>&status=Unavailable">Mark Unavailable</a>
-            <br><br>
-        <?php endif; ?>
-
-        <a class="btn btn-status"
-           href="index.php?controller=comment&action=show&deal_id=<?php echo $deal['id']; ?>">
-           Comments
-        </a>
-
+<!-- Filter Bar -->
+<div class="filter-bar">
+    <div class="categories-wrapper">
+        <div class="categories-container">
+            <a href="index.php?controller=deal&action=index" class="category-btn <?php echo !isset($_GET['category']) ? 'active' : ''; ?>">All</a>
+            <a href="index.php?controller=deal&action=index&category=Electronics" class="category-btn <?php echo ($_GET['category'] ?? '') == 'Electronics' ? 'active' : ''; ?>">Electronics</a>
+            <a href="index.php?controller=deal&action=index&category=Fashion" class="category-btn <?php echo ($_GET['category'] ?? '') == 'Fashion' ? 'active' : ''; ?>">Fashion</a>
+            <a href="index.php?controller=deal&action=index&category=Groceries" class="category-btn <?php echo ($_GET['category'] ?? '') == 'Groceries' ? 'active' : ''; ?>">Groceries</a>
+            <a href="index.php?controller=deal&action=index&category=Home" class="category-btn <?php echo ($_GET['category'] ?? '') == 'Home' ? 'active' : ''; ?>">Home</a>
+            <a href="index.php?controller=deal&action=index&category=Sports" class="category-btn <?php echo ($_GET['category'] ?? '') == 'Sports' ? 'active' : ''; ?>">Sports</a>
+        </div>
     </div>
 </div>
-<?php endwhile; ?>
+
+<!-- Deals Grid -->
+<div class="deals-grid">
+    <?php if($deals->num_rows == 0): ?>
+        <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <h3>No deals found</h3>
+            <p>Try a different search or be the first to post a deal!</p>
+        </div>
+    <?php endif; ?>
+
+    <?php while($deal = $deals->fetch_assoc()): ?>
+        <div class="deal-card">
+            <div class="card-image">
+                <img src="../uploads/<?php echo htmlspecialchars($deal['image']); ?>" 
+                     alt="<?php echo htmlspecialchars($deal['item_name']); ?>">
+                
+                <?php if($deal['status'] == 'available'): ?>
+                    <div class="status-badge status-available">✓ Available</div>
+                <?php elseif($deal['status'] == 'Unavailable'): ?>
+                    <div class="status-badge status-gone">✗ Gone</div>
+                <?php else: ?>
+                    <div class="status-badge status-going">⏰ Going Fast</div>
+                <?php endif; ?>
+                
+                <div class="discount-badge">DEAL</div>
+            </div>
+            
+            <div class="card-content">
+                <h3><?php echo htmlspecialchars($deal['item_name']); ?></h3>
+                <div class="store-info">🏪 <?php echo htmlspecialchars($deal['store_name']); ?></div>
+                
+                <div class="price-section">
+                    <div>
+                        <div class="deal-price">$<?php echo number_format($deal['price'], 2); ?></div>
+                    </div>
+                    <div class="location-time">
+                        <div>📍 <?php echo htmlspecialchars($deal['location']); ?></div>
+                        <div>🕒 <?php echo date('M d, g:i a', strtotime($deal['created_at'])); ?></div>
+                    </div>
+                </div>
+                
+                <!-- COMMENT BUTTON - Added here -->
+                <div style="margin-top: 15px;">
+                    <a href="index.php?controller=comment&action=show&deal_id=<?php echo $deal['id']; ?>" 
+                       style="display: inline-block; background: #10b981; color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold;">
+                        💬 View Comments
+                    </a>
+                </div>
+            </div>
+        </div>
+    <?php endwhile; ?>
+</div>
+
 <?php require "../app/views/layouts/footer.php"; ?>

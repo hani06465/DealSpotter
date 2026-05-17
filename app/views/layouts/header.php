@@ -194,6 +194,7 @@
             color: #f97316;
         }
     </style>
+<script src="/DealSpotter/public/assets/script.js" defer></script>
 </head>
 <body>
     <header>
